@@ -1,10 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Placeholder Inspector",
-  "version": "1.0",
-  "description": "Inspect placeholder (watermark) font size and color",
+  "version": "1.1",
+  "description": "Inspect placeholder font size, family, color, and opacity of inputs and textareas",
   "permissions": ["activeTab", "scripting"],
   "action": {
     "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   }
 }

@@ -1,14 +1,44 @@
-document.getElementById("inspect").addEventListener("click", async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+const inspectBtn = document.getElementById("inspectBtn");
+const resultBox = document.getElementById("result");
 
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    function: inspectPlaceholder
-  }, (results) => {
-    document.getElementById("result").textContent =
-      results?.[0]?.result || "No input selected";
-  });
+inspectBtn.addEventListener("click", async () => {
+  resultBox.textContent = "Inspecting...";
+  resultBox.className = "result-box";
+
+  try {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    });
+
+    chrome.scripting.executeScript(
+      {
+        target: { tabId: tab.id },
+        function: inspectPlaceholder
+      },
+      (results) => {
+        const response = results?.[0]?.result;
+
+        if (!response) {
+          showError("No input selected");
+        } else if (response.startsWith("❌")) {
+          showError(response.replace("❌", "").trim());
+        } else {
+          resultBox.textContent = response;
+        }
+      }
+    );
+  } catch (err) {
+    showError("Something went wrong");
+  }
 });
+
+function showError(message) {
+  resultBox.textContent = message;
+  resultBox.classList.add("error");
+}
+
+/* -------- Content Script Function -------- */
 
 function inspectPlaceholder() {
   const el = document.activeElement;
@@ -19,32 +49,38 @@ function inspectPlaceholder() {
 
   const styles = getComputedStyle(el, "::placeholder");
 
-  // Convert rgb/rgba to HEX
-  function rgbToHex(rgb) {
-    const result = rgb.match(/\d+/g);
-    if (!result) return "N/A";
+  const rgbToHex = (rgb) => {
+    const values = rgb.match(/\d+/g);
+    if (!values) return "N/A";
 
     return (
       "#" +
-      result
+      values
         .slice(0, 3)
-        .map(x => parseInt(x).toString(16).padStart(2, "0"))
+        .map(v => parseInt(v).toString(16).padStart(2, "0"))
         .join("")
         .toUpperCase()
     );
-  }
+  };
 
-  // Convert opacity to %
-  const opacityPercent = styles.opacity
+  const opacity = styles.opacity
     ? `${Math.round(parseFloat(styles.opacity) * 100)}%`
     : "100%";
 
   return `
-Placeholder Text: "${el.placeholder}"
+Placeholder Text:
+"${el.placeholder || "—"}"
 
-Font Size: ${styles.fontSize}
-Font Family: ${styles.fontFamily}
-Color (HEX): ${rgbToHex(styles.color)}
-Opacity: ${opacityPercent}
-  `;
+Font Size:
+${styles.fontSize}
+
+Font Family:
+${styles.fontFamily}
+
+Color:
+${rgbToHex(styles.color)}
+
+Opacity:
+${opacity}
+`;
 }

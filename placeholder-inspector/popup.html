@@ -1,28 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <title>Placeholder Inspector</title>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 10px;
-      width: 260px;
+      width: 280px;
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f8fafc;
     }
+
+    .container {
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 16px;
+      margin: 0 0 4px;
+      color: #0f172a;
+    }
+
+    p {
+      font-size: 12px;
+      color: #475569;
+      margin-bottom: 12px;
+    }
+
     button {
       width: 100%;
-      padding: 6px;
+      padding: 10px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
       cursor: pointer;
     }
-    pre {
-      background: #f4f4f4;
-      padding: 8px;
+
+    button:hover {
+      background: #1e40af;
+    }
+
+    .result-box {
+      margin-top: 12px;
+      padding: 10px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
       font-size: 12px;
+      color: #0f172a;
       white-space: pre-wrap;
+      line-height: 1.5;
+      min-height: 60px;
+    }
+
+    .hint {
+      color: #64748b;
+    }
+
+    .error {
+      color: #dc2626;
+      font-weight: 500;
     }
   </style>
 </head>
+
 <body>
-  <button id="inspect">Inspect Selected Input</button>
-  <pre id="result">Click inside an input field first</pre>
+  <div class="container">
+    <h1>Placeholder Inspector</h1>
+    <p>Click inside an input or textarea, then inspect its placeholder styles.</p>
+
+    <button id="inspectBtn">Inspect Placeholder</button>
+
+    <div id="result" class="result-box hint">
+      Select an input field on the page
+    </div>
+  </div>
 
   <script src="popup.js"></script>
 </body>
